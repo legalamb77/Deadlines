@@ -1,0 +1,11 @@
+I want to write a python script that does basic tracking of deadlines.
+
+Each deadline is an id which is stored in a dictionary, with data corresponding to a tuple: (Date it's due on,Priority)
+
+A dictionary of these deadlines is stored in the usr profile? I'll have to see where the best place to do this is.
+
+This file is constant.
+
+The script can also be queried by typing Deadlines.py add (deadline,Date,Priority), or Deadlines.py delete (deadline)
+
+At startup of a terminal, a function in the script is called in the .bashrc, which lists the deadlines in a sorted order, with a balance between the Date and the Priority. (Lower priority that's soon may outweigh a high priority a year from now.)
