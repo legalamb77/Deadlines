@@ -15,12 +15,19 @@ def deadlineCheck(v):
 #Functions:
 
 #In this section are the auxillary functions.
+def comparisonKey(line):
+    try:
+        regex=re.match("^\(.*,([0-9]*),([0-9]|10)\)$", line)
+        return (int(regex.group(1))*int(regex.group(2)))
+    except:
+        raise "Input formatting error."
+
 def defaultSort(lines):
     print "Sorting..."
     #In this function, we must take a list of lines, and sort it by a customized algorithm
     #Algorithm: We want to take into account both the days and the priority.
     ##option: days*priority? might weigh priority too much...
-    newLines=lines
+    newLines=sorted(lines,key=comparisonKey)
     return newLines
 
 #Three Functions are accessible to users, detailed below.
