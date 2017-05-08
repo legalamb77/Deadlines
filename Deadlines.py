@@ -1,6 +1,7 @@
 import sys
 import re
 import argparse
+import os.path
 
 #Special checker for deadline type
 def deadlineCheck(v):
@@ -24,8 +25,18 @@ def add(deadline):
     log.close()
 #2: "delete" calls the delete function, which removes a deadline when given the name, date, and priority in a list.
 def delete(name):
-    print "del"
     #delete the line from the file corresponding to "name", return true if successful, false if not found.
+    logR=0
+    try:
+        logR=open('.DeadlinesLog.txt', 'r')
+    except:
+        raise "No log file exists in the current directory, or if it does, it cannot be opened. So you cannot remove anything from it."
+    lines=logR.readlines()
+    logR.close()
+    logW=open('.DeadlinesLog.txt', 'w')
+    for line in lines:
+        if(not re.match(r"^\("+re.escape(name)+r",[0-9]*,([0-9]|10)\)$", line).group(0)):
+            log.write(line)
 #3: "display" displays the sorted dictionary, with sorting type specified
 def display(sort):
     print "sort"
