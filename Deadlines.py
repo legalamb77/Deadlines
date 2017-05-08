@@ -7,7 +7,7 @@ def deadlineCheck(v):
     try:
         return re.match("^\(.*,[0-9]*,([0-9]|10)\)$", v).group(0)
     except:
-        raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format (NAME,DAYS UNTIL DUE,PRIORITY), where priority is a number from 1 to 10, inclusive."%(v,))
+        raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format '(NAME,DAYS UNTIL DUE,PRIORITY)', where priority is a number from 1 to 10, inclusive."%(v,))
 
 
 #Does 0 need to exist? Depends on where the file is...
@@ -17,8 +17,11 @@ def init():
         print "yo"
 #1: "add" calls the add function, which adds a deadline when given a string corresponding to the deadlineCheck format.
 def add(deadline):
-    print deadline
+    print "Adding deadline: %s" %deadline
     #Write to a specific file in same directory as .bashrc in the format (name,date,priority)
+    log=open('.DeadlinesLog.txt', 'a')
+    log.write("%s\n" %deadline)
+    log.close()
 #2: "delete" calls the delete function, which removes a deadline when given the name, date, and priority in a list.
 def delete(name):
     print "del"
