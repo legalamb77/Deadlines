@@ -1,7 +1,8 @@
 import sys
 import re
 import argparse
-import os.path
+
+#Priority 1 is most important, priority 10 is least important.
 
 #Special checker for deadline type
 def deadlineCheck(v):
@@ -11,11 +12,18 @@ def deadlineCheck(v):
         raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format '(NAME,DAYS UNTIL DUE,PRIORITY)', where priority is a number from 1 to 10, inclusive."%(v,))
 
 
-#Does 0 need to exist? Depends on where the file is...
 #Functions:
-#0: "init" calls the init function, which writes a file in the correct spot for storing data
-def init():
-        print "yo"
+
+#In this section are the auxillary functions.
+def defaultSort(lines):
+    print "Sorting..."
+    #In this function, we must take a list of lines, and sort it by a customized algorithm
+    #Algorithm: We want to take into account both the days and the priority.
+    ##option: days*priority? might weigh priority too much...
+    newLines=lines
+    return newLines
+
+#Three Functions are accessible to users, detailed below.
 #1: "add" calls the add function, which adds a deadline when given a string corresponding to the deadlineCheck format.
 def add(deadline):
     print "Adding deadline: %s" %deadline
@@ -25,7 +33,7 @@ def add(deadline):
     log.close()
 #2: "delete" calls the delete function, which removes a deadline when given the name, date, and priority in a list.
 def delete(name):
-    #delete the line from the file corresponding to "name", return true if successful, false if not found.
+    #delete the line from the file corresponding to "name".
     logR=0
     try:
         logR=open('.DeadlinesLog.txt', 'r')
@@ -36,17 +44,23 @@ def delete(name):
     logW=open('.DeadlinesLog.txt', 'w')
     for line in lines:
         if(not re.match(r"^\("+re.escape(name)+r",[0-9]*,([0-9]|10)\)$", line).group(0)):
-            log.write(line)
-#3: "display" displays the sorted dictionary, with sorting type specified
+            logW.write(line)
+#3: "display" displays the sorted collection of deadlines, with sorting type specified
 def display(sort):
-    print "sort"
-
+    logR=0
+    try:
+        logR=open('.DeadlinesLog.txt', 'r')
+    except:
+        raise "No log file exists in the current directory. Please add a deadline."
+    lines=logR.readlines()
+    logR.close()
+    #Basic display. I would like to implement a prettier one, where it says something like:
+    ##"DEADLINE: Due in DAYS day(s), with a priority of PRIORITY."
+    for l in defaultSort(lines):
+        print "%s\n" %l
 
 #Main body: Check arguments it's called with, and call the appropriate function.
-#use sys.argv[#], #0 is always just Deadlines.py
 parser=argparse.ArgumentParser(description='Choose function to run.')
-#The only functions that can be called right now are these three.
-#parser.add_argument('function-name',choices=['add','delete','display'])
 #To enter a deadline, one uses -a, which is then followed by:
 ##The deadline name
 ##The date
