@@ -2,12 +2,20 @@ import sys
 import re
 import argparse
 
+#Special checker for deadline type
+def deadlineCheck(v):
+    try:
+        return re.match("^\(.*,[0-9]*,([0-9]|10)\)$", v).group(0)
+    except:
+        raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format (NAME,DAYS UNTIL DUE,PRIORITY), where priority is a number from 1 to 10, inclusive."%(v,))
+
+
 #Does 0 need to exist? Depends on where the file is...
 #Functions:
 #0: "init" calls the init function, which writes a file in the correct spot for storing data
 def init():
         print "yo"
-#1: "add" calls the add function, which adds a deadline when given the name, date, and priority in a list.
+#1: "add" calls the add function, which adds a deadline when given a string corresponding to the deadlineCheck format.
 def add(deadline):
     print deadline
     #Write to a specific file in same directory as .bashrc in the format (name,date,priority)
@@ -29,7 +37,7 @@ parser=argparse.ArgumentParser(description='Choose function to run.')
 ##The deadline name
 ##The date
 ##The priority
-parser.add_argument('--a', nargs=3)
+parser.add_argument('--a', nargs=1,type=deadlineCheck)
 
 parser.add_argument('--d', nargs=1)
 
@@ -40,7 +48,7 @@ comms=vars(parser.parse_args())
 print comms
 
 if(comms['a']):
-    add(comms['a'])
+    add(comms['a'].pop())
 if(comms['d']):
     delete(comms['d'].pop())
 if(comms['s']):
