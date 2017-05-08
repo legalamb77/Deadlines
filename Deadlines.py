@@ -1,29 +1,40 @@
 import sys
 import re
 import argparse
+import datetime
+
+now = datetime.datetime.now()
 
 #Priority 1 is most important, priority 10 is least important.
 
 #Special checker for deadline type
 def deadlineCheck(v):
     try:
-        return re.match("^\(.*,[0-9]*,([0-9]|10)\)$", v).group(0)
+        return re.match("^\(.*,([0-3][0-9]|[0-9])/(1[0-2]|[1-9])/2[0-9][0-9][0-9],([0-9]|10)\)$", v).group(0)
     except:
-        raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format '(NAME,DAYS UNTIL DUE,PRIORITY)', where priority is a number from 1 to 10, inclusive."%(v,))
+        raise argparse.ArgumentTypeError("The deadline entered, '%s', does not meet the formatting criteria. Please enter a deadline with the format '(NAME,DUE DATE,PRIORITY)', where the due date is formatted as day/month/year, and priority is a number from 1 to 10, inclusive."%(v,))
 
 
 #Functions:
 
 #In this section are the auxillary functions.
+def dateDiff(date,entry):
+    regex=re.match("^\(.*,([0-3][0-9]|[0-9])/(1[0-2]|[0-9])/(2[0-9][0-9][0-9]),([0-9]|10)\)$", entry)
+    day=int(regex.group(1))
+    month=int(regex.group(2))
+    year=int(regex.group(3))
+    date=datetime.date(year,month,day)
+    return (date-now.date()).days
+
 def comparisonKey(line):
     try:
-        regex=re.match("^\(.*,([0-9]*),([0-9]|10)\)$", line)
-        return (int(regex.group(1))*int(regex.group(2)))
+        regex=re.match("^\(.*,([0-3][0-9]|[0-9])/(1[0-2]|[0-9])/(2[0-9][0-9][0-9]),([0-9]|10)\)$", line)
+        daysUntil=dateDiff(now,line)
+        return (int(regex.group(4))*daysUntil) 
     except:
-        raise "Input formatting error."
+        raise Exception("Input formatting error.")
 
 def defaultSort(lines):
-    print "Sorting..."
     #In this function, we must take a list of lines, and sort it by a customized algorithm
     #Algorithm: We want to take into account both the days and the priority.
     ##option: days*priority? might weigh priority too much...
@@ -45,12 +56,12 @@ def delete(name):
     try:
         logR=open('.DeadlinesLog.txt', 'r')
     except:
-        raise "No log file exists in the current directory, or if it does, it cannot be opened. So you cannot remove anything from it."
+        raise Exception("No log file exists in the current directory, or if it does, it cannot be opened. So you cannot remove anything from it.")
     lines=logR.readlines()
     logR.close()
     logW=open('.DeadlinesLog.txt', 'w')
     for line in lines:
-        if(not re.match(r"^\("+re.escape(name)+r",[0-9]*,([0-9]|10)\)$", line).group(0)):
+        if(not re.match(r"^\("+re.escape(name)+r",([0-3][0-9]|[0-9])/(1[0-2]|[0-9])/2[0-9][0-9][0-9],([0-9]|10)\)$", line).group(0)):
             logW.write(line)
 #3: "display" displays the sorted collection of deadlines, with sorting type specified
 def display(sort):
@@ -58,19 +69,20 @@ def display(sort):
     try:
         logR=open('.DeadlinesLog.txt', 'r')
     except:
-        raise "No log file exists in the current directory. Please add a deadline."
+        raise Exception("No log file exists in the current directory. Please add a deadline.")
     lines=logR.readlines()
     logR.close()
     #Basic display. I would like to implement a prettier one, where it says something like:
     ##"DEADLINE: Due in DAYS day(s), with a priority of PRIORITY."
     for l in defaultSort(lines):
-        regex=re.match("^\((.*),([0-9]*),([0-9]|10)\)$", l)
-        if(int(regex.group(2))>1):
-            print "%s will be due in %s days, with a priority of %s." %(regex.group(1),regex.group(2),regex.group(3))
-        elif(int(regex.group(2))==1):
-            print "%s will be due in %s day, with a priority of %s." %(regex.group(1),regex.group(2),regex.group(3))
+        regex=re.match("^\((.*),([0-3][0-9]|[0-9])/(1[0-2]|[0-9])/2[0-9][0-9][0-9],([0-9]|10)\)$", l)
+        daysUntil=dateDiff(now,l)
+        if(daysUntil>1):
+            print "%s will be due in %d days, with a priority of %s." %(regex.group(1),daysUntil,regex.group(4))
+        elif(daysUntil==1):
+            print "%s will be due in %d day, with a priority of %s." %(regex.group(1),daysUntil,regex.group(4))
         else:
-            print "%s is due today, with a priority of %s!" %(regex.group(1),regex.group(3))
+            print "%s is due today, with a priority of %s!" %(regex.group(1),regex.group(4))
 
 #Main body: Check arguments it's called with, and call the appropriate function.
 parser=argparse.ArgumentParser(description='Choose function to run.')
@@ -85,8 +97,6 @@ parser.add_argument('--d', nargs=1)
 parser.add_argument('--s', nargs=1, choices=['default'])
 
 comms=vars(parser.parse_args())
-
-print comms
 
 if(comms['a']):
     add(comms['a'].pop())
