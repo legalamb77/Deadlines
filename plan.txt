@@ -13,3 +13,5 @@ At startup of a terminal, a function in the script is called in the .bashrc, whi
 ##Just realized that I'll need to implement a function to actually decrease the days each day... Hm...
 
 I could do this by checking the date when the script is being run, and also storing the date when a deadline was added.
+
+##Now that the scaling based on current day is added in, I need to put in a function that automatically deletes deadlines that have passed (i.e. difference is negative)
