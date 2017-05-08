@@ -66,11 +66,11 @@ def display(sort):
     for l in defaultSort(lines):
         regex=re.match("^\((.*),([0-9]*),([0-9]|10)\)$", l)
         if(int(regex.group(2))>1):
-            print "%s will be due in %s days, with a priority of %s." %l.group(1) %l.group(2) %l.group(3)
+            print "%s will be due in %s days, with a priority of %s." %(regex.group(1),regex.group(2),regex.group(3))
         elif(int(regex.group(2))==1):
-            print "%s will be due in %s day, with a priority of %s." %l.group(1) %l.group(2) %l.group(3)
+            print "%s will be due in %s day, with a priority of %s." %(regex.group(1),regex.group(2),regex.group(3))
         else:
-            print "%s is due today, with a priority of %s!" %l.group(1) %l.group(3)
+            print "%s is due today, with a priority of %s!" %(regex.group(1),regex.group(3))
 
 #Main body: Check arguments it's called with, and call the appropriate function.
 parser=argparse.ArgumentParser(description='Choose function to run.')
