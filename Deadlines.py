@@ -64,7 +64,13 @@ def display(sort):
     #Basic display. I would like to implement a prettier one, where it says something like:
     ##"DEADLINE: Due in DAYS day(s), with a priority of PRIORITY."
     for l in defaultSort(lines):
-        print "%s\n" %l
+        regex=re.match("^\((.*),([0-9]*),([0-9]|10)\)$", l)
+        if(int(regex.group(2))>1):
+            print "%s will be due in %s days, with a priority of %s." %l.group(1) %l.group(2) %l.group(3)
+        elif(int(regex.group(2))==1):
+            print "%s will be due in %s day, with a priority of %s." %l.group(1) %l.group(2) %l.group(3)
+        else:
+            print "%s is due today, with a priority of %s!" %l.group(1) %l.group(3)
 
 #Main body: Check arguments it's called with, and call the appropriate function.
 parser=argparse.ArgumentParser(description='Choose function to run.')
