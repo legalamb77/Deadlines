@@ -30,9 +30,23 @@ def comparisonKey(line):
     try:
         regex=re.match("^\(.*,([0-3][0-9]|[0-9])/(1[0-2]|[0-9])/(2[0-9][0-9][0-9]),([0-9]|10)\)$", line)
         daysUntil=dateDiff(now,line)
-        return (int(regex.group(4))*daysUntil) 
+        return (daysUntil/int(regex.group(4))) 
     except:
         raise Exception("Input formatting error.")
+
+#Searchs through the file and removes any deadlines which have already passed.
+#Normally, this should be called each time Display is called.
+def cull():
+    log=open('.DeadlinesLog.txt', 'r')
+    lines=log.readlines()
+    log.close()
+    logW=open('.DeadlinesLog.txt', 'w')
+    for l in lines:
+        if(dateDiff(now,l)>=0):
+            logW.write(l)
+        else:
+            print "The deadline: %s, has passed. It has been culled." %l
+    logW.close()
 
 def defaultSort(lines):
     #In this function, we must take a list of lines, and sort it by a customized algorithm
@@ -65,6 +79,7 @@ def delete(name):
             logW.write(line)
 #3: "display" displays the sorted collection of deadlines, with sorting type specified
 def display(sort):
+    cull()
     logR=0
     try:
         logR=open('.DeadlinesLog.txt', 'r')
