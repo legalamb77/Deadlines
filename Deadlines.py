@@ -80,12 +80,13 @@ def delete(name):
 #3: "display" displays the sorted collection of deadlines, with sorting type specified
 #Currently, it only supports the 'default' sort, or if anything but default is entered, it simply displays the unsorted file.
 def display(sort):
-    cull()
-    logR=0
     try:
         logR=open('.DeadlinesLog.txt', 'r')
+        logR.close()
     except:
         raise Exception("No log file exists in the current directory. Please add a deadline.")
+    cull()
+    logR=open('.DeadlinesLog.txt', 'r') 
     lines=logR.readlines()
     logR.close()
     if (sort=="default"):
