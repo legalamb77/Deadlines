@@ -1,4 +1,4 @@
-#Deadlines.py
+# Deadlines.py
 
 This is a simple script that I wrote to provide some functionality to my terminal.
 
@@ -9,13 +9,13 @@ The sorting algorithm, used when calling 'default' as the argument to the --s co
 1 is the highest priority, and 10 is the lowest, in this application.
 
 
-##Setup
+## Setup
 
 In order to have the script display deadlines on startup, please place it in the same directory as your .bashrc file, and add the following line to the file:
 
 python Deadlines.py --s 'default'
 
-##Syntax
+## Syntax
 
 Adding Deadlines: `python Deadlines.py --a '(NAME,DATE,PRIORITY)'`
 Where Date is formatted as DAY/MONTH/YEAR, and Priority ranges from 1 to 10.
